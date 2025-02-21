@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "hello",
-  "author": "someone",
+  "title": "2342344324",
+  "author": "hetserewretim",
   "url": "https://pomofocus.io/",
-  "likes": 200
+  "likes": 235
 }
