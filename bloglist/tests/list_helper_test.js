@@ -63,3 +63,67 @@ describe('total likes', () => {
       assert.strictEqual(result, 0);
     });
   });
+
+
+  describe('favorite blog', () => {
+    const listWithOneBlog = [
+      {
+        _id: '5a422aa71b54a676234d17f8',
+        title: 'Go To Statement Considered Harmful',
+        author: 'Edsger W. Dijkstra',
+        url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
+        likes: 5,
+        __v: 0
+      }
+    ];
+  
+    const multipleBlogs = [
+      {
+        _id: '1',
+        title: 'Blog A',
+        author: 'Author 1',
+        url: 'http://example.com/1',
+        likes: 5,
+        __v: 0
+      },
+      {
+        _id: '2',
+        title: 'Blog B',
+        author: 'Author 2',
+        url: 'http://example.com/2',
+        likes: 12,
+        __v: 0
+      },
+      {
+        _id: '3',
+        title: 'Blog C',
+        author: 'Author 3',
+        url: 'http://example.com/3',
+        likes: 7,
+        __v: 0
+      }
+    ];
+  
+    test('when list has only one blog, returns that blog', () => {
+      const result = listHelper.favoriteBlog(listWithOneBlog);
+      assert.deepStrictEqual(result, {
+        title: 'Go To Statement Considered Harmful',
+        author: 'Edsger W. Dijkstra',
+        likes: 5
+      });
+    });
+  
+    test('when list has multiple blogs, returns the blog with most likes', () => {
+      const result = listHelper.favoriteBlog(multipleBlogs);
+      assert.deepStrictEqual(result, {
+        title: 'Blog B',
+        author: 'Author 2',
+        likes: 12
+      });
+    });
+  
+    test('when list is empty, returns null', () => {
+      const result = listHelper.favoriteBlog([]);
+      assert.strictEqual(result, null);
+    });
+  });
