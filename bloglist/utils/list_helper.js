@@ -13,7 +13,7 @@ const favoriteBlog = (blogs) => {
     blog.likes > (maxBlog.likes || 0) ? blog : maxBlog
   , blogs[0]); // Start with the first blog
 
-  // ✅ Return only the required properties
+  
   return {
     title: mostLikedBlog.title,
     author: mostLikedBlog.author,
@@ -21,10 +21,44 @@ const favoriteBlog = (blogs) => {
   };
 };
 
+const mostBlogs = (blogs) => {
+  if (blogs.length === 0) return null; // Edge case: no blogs
 
-  module.exports = {
-    dummy,
-    totalLikes,
-    favoriteBlog,
-  };
-  
+  const authorCounts = {}; // Object to store author counts
+
+  blogs.forEach((blog) => {
+    authorCounts[blog.author] = (authorCounts[blog.author] || 0) + 1;
+  });
+
+  // Find the author with the max blogs
+  const topAuthor = Object.keys(authorCounts).reduce((max, author) =>
+    authorCounts[author] > authorCounts[max] ? author : max
+  );
+
+  return { author: topAuthor, blogs: authorCounts[topAuthor] };
+};
+
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) return null; // Edge case: no blogs
+
+  const authorLikes = {}; // Object to store likes per author
+
+  blogs.forEach((blog) => {
+    authorLikes[blog.author] = (authorLikes[blog.author] || 0) + blog.likes;
+  });
+
+  // Find the author with the max likes
+  const topAuthor = Object.keys(authorLikes).reduce((max, author) =>
+    authorLikes[author] > authorLikes[max] ? author : max
+  );
+
+  return { author: topAuthor, likes: authorLikes[topAuthor] };
+};
+
+module.exports = {
+  dummy,
+  totalLikes,
+  favoriteBlog,
+  mostBlogs,
+  mostLikes, //
+};

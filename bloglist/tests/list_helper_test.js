@@ -127,3 +127,45 @@ describe('total likes', () => {
       assert.strictEqual(result, null);
     });
   });
+
+
+  describe('most blogs', () => {
+    const blogs = [
+      { author: 'Robert C. Martin', title: 'Blog 1' },
+      { author: 'Edsger W. Dijkstra', title: 'Blog 2' },
+      { author: 'Robert C. Martin', title: 'Blog 3' },
+      { author: 'Edsger W. Dijkstra', title: 'Blog 4' },
+      { author: 'Robert C. Martin', title: 'Blog 5' },
+    ];
+  
+    test('returns the author with the most blogs', () => {
+      const result = listHelper.mostBlogs(blogs);
+      assert.deepStrictEqual(result, { author: 'Robert C. Martin', blogs: 3 });
+    });
+  
+    test('returns null for an empty list', () => {
+      const result = listHelper.mostBlogs([]);
+      assert.strictEqual(result, null);
+    });
+  });
+  
+  describe('most likes', () => {
+    const blogs = [
+      { author: 'Robert C. Martin', likes: 3 },
+      { author: 'Edsger W. Dijkstra', likes: 7 },
+      { author: 'Robert C. Martin', likes: 5 },
+      { author: 'Edsger W. Dijkstra', likes: 10 },
+      { author: 'Robert C. Martin', likes: 2 },
+    ];
+  
+    test('returns the author with the most likes', () => {
+      const result = listHelper.mostLikes(blogs);
+      assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', likes: 17 });
+    });
+  
+    test('returns null for an empty list', () => {
+      const result = listHelper.mostLikes([]);
+      assert.strictEqual(result, null);
+    });
+  });
+  
