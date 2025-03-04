@@ -10,10 +10,28 @@ router.get('/', async (req, res) => {
 });
 
 // POST a new blog
-router.post('/', async (req, res) => {
-    const blog = new Blog(req.body);
-    const savedBlog = await blog.save();
-    res.status(201).json(savedBlog);
+router.post('/', async (req, res, next) => {
+    try {
+        const { title, author, url, likes } = req.body;
+
+        // Ensure title and url are required
+        if (!title || !url) {
+            return res.status(400).json({ error: 'Title and URL are required' });
+        }
+
+        // Ensure `likes` defaults to 0 if not provided
+        const blog = new Blog({
+            title,
+            author,
+            url,
+            likes: likes || 0,
+        });
+
+        const savedBlog = await blog.save();
+        res.status(201).json(savedBlog);
+    } catch (error) {
+        next(error); // Pass error to Express middleware
+    }
 });
 
 module.exports = router;

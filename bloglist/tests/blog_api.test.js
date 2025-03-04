@@ -50,3 +50,63 @@ test('blogs have an id field instead of _id', async () => {
     expect(blog._id).toBeUndefined(); // Ensure `_id` is removed
   });
 });
+
+
+test('a valid blog can be added', async () => {
+  const newBlog = {
+    title: 'New Blog Post',
+    author: 'Test Author',
+    url: 'https://example.com/new',
+    likes: 7,
+  };
+
+  // Send POST request to create new blog
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201) // Expect HTTP 201 Created
+    .expect('Content-Type', /application\/json/); // Expect JSON response
+
+  // Fetch all blogs after posting
+  const response = await api.get('/api/blogs');
+  const contents = response.body.map(blog => blog.title);
+
+  // Verify blog count increased by 1
+  expect(response.body).toHaveLength(initialBlogs.length + 1);
+  // Verify new blog is saved
+  expect(contents).toContain('New Blog Post');
+});
+
+
+test('if likes property is missing, it defaults to 0', async () => {
+  const newBlog = {
+      title: 'No Likes Blog',
+      author: 'Author Zero',
+      url: 'https://example.com/nolikes',
+  };
+
+  const response = await api.post('/api/blogs').send(newBlog).expect(201);
+  
+  // Ensure likes is 0 when not provided
+  expect(response.body.likes).toBe(0);
+});
+
+test('blog without title is not added', async () => {
+  const newBlog = {
+      author: 'No Title Author',
+      url: 'https://example.com/notitle',
+      likes: 3,
+  };
+
+  await api.post('/api/blogs').send(newBlog).expect(400);
+});
+
+test('blog without url is not added', async () => {
+  const newBlog = {
+      title: 'No URL Blog',
+      author: 'No URL Author',
+      likes: 5,
+  };
+
+  await api.post('/api/blogs').send(newBlog).expect(400);
+});
