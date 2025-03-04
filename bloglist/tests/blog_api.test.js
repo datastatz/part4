@@ -110,3 +110,60 @@ test('blog without url is not added', async () => {
 
   await api.post('/api/blogs').send(newBlog).expect(400);
 });
+
+describe('deletion of a blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+      const blogsAtStart = await Blog.find({});
+      const blogToDelete = blogsAtStart[0];
+
+      await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+      const blogsAtEnd = await Blog.find({});
+      expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1);
+
+      const contents = blogsAtEnd.map(blog => blog.title);
+      expect(contents).not.toContain(blogToDelete.title);
+  });
+
+  test('fails with status code 404 if blog does not exist', async () => {
+      const nonExistingId = await new Blog({ title: 'Temp', url: 'https://temp.com' }).save();
+      const id = nonExistingId._id.toString();
+      await Blog.findByIdAndDelete(id); // Delete from DB first
+
+      await api.delete(`/api/blogs/${id}`).expect(404);
+  });
+
+  test('fails with status code 400 for invalid ID', async () => {
+      await api.delete('/api/blogs/invalidid').expect(400);
+  });
+});
+
+
+describe('updating a blog', () => {
+  test('succeeds in updating likes of a blog', async () => {
+      const blogsAtStart = await Blog.find({});
+      const blogToUpdate = blogsAtStart[0];
+
+      const updatedLikes = { likes: blogToUpdate.likes + 10 };
+
+      const response = await api
+          .put(`/api/blogs/${blogToUpdate.id}`)
+          .send(updatedLikes)
+          .expect(200)
+          .expect('Content-Type', /application\/json/);
+
+      expect(response.body.likes).toBe(blogToUpdate.likes + 10);
+  });
+
+  test('fails with status code 404 if blog does not exist', async () => {
+      const nonExistingId = await new Blog({ title: 'Temp', url: 'https://temp.com' }).save();
+      const id = nonExistingId._id.toString();
+      await Blog.findByIdAndDelete(id); // Delete it before updating
+
+      await api.put(`/api/blogs/${id}`).send({ likes: 10 }).expect(404);
+  });
+
+  test('fails with status code 400 for invalid ID', async () => {
+      await api.put('/api/blogs/invalidid').send({ likes: 10 }).expect(400);
+  });
+});
