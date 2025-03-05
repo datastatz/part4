@@ -6,6 +6,7 @@ const blogRouter = require('./routes/blogs'); // Import blog routes
 const { PORT, MONGODB_URI } = require('./utils/config'); // Import config
 const errorHandler = require('./middleware/errorHandler')
 const usersRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
 
 const app = express();
 
@@ -14,7 +15,7 @@ app.use(express.json()); // Fix for undefined content.body
 app.use('/api/blogs', blogRouter); // Use blog routes
 app.use(errorHandler)
 app.use('/api/users', usersRouter);
-
+app.use('/api/login', loginRouter) // register the login route
 
 
 
