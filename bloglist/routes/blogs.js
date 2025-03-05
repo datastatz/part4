@@ -1,6 +1,9 @@
 const express = require('express');
-const mongoose = require('mongoose'); // ✅ Import mongoose
+const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose'); //  Import mongoose
 const Blog = require('../models/blog'); // Import model
+const User = require('../models/user'); // Import User model
+
 
 const router = express.Router();
 
@@ -12,28 +15,41 @@ router.get('/', async (req, res) => {
 
 // POST a new blog
 router.post('/', async (req, res, next) => {
-    try {
-        const { title, author, url, likes } = req.body;
-
-        // Ensure title and url are required
-        if (!title || !url) {
-            return res.status(400).json({ error: 'Title and URL are required' });
-        }
-
-        // Ensure `likes` defaults to 0 if not provided
-        const blog = new Blog({
-            title,
-            author,
-            url,
-            likes: likes || 0,
-        });
-
-        const savedBlog = await blog.save();
-        res.status(201).json(savedBlog);
-    } catch (error) {
-        next(error); // Pass error to Express middleware
+  try {
+    if (!req.token) {
+      return res.status(401).json({ error: 'Token missing' }) // Ensure tokenExtractor is working
     }
-});
+
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return res.status(401).json({ error: 'Invalid token' })
+    }
+
+    const user = await User.findById(decodedToken.id)
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' })
+    }
+
+    const blog = new Blog({
+      title: req.body.title,
+      author: req.body.author,
+      url: req.body.url,
+      likes: req.body.likes || 0,
+      user: user._id, // Assign blog to authenticated user
+    })
+
+    const savedBlog = await blog.save()
+
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
+
+    res.status(201).json(savedBlog)
+  } catch (error) {
+    next(error)
+  }
+})
+
+ 
 
 // DELETE a blog by ID
 router.delete('/:id', async (req, res, next) => {
