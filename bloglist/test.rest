@@ -37,7 +37,8 @@ Content-Type: application/json
 
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWQiOiI2N2M4NTY5OGYwOTMyYmI4MzI3NTZiMzYiLCJpYXQiOjE3NDExOTk2NzAsImV4cCI6MTc0MTIwMzI3MH0.u3H_uiNHgEUSrYCghX12Ohl2QpvWbQIpcuGgs4nopfE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWQiOiI2N2M4NTY5OGYwOTMyYmI4MzI3NTZiMzYiLCJpYXQiOjE3NDExOTk3MDUsImV4cCI6MTc0MTIwMzMwNX0.WXRIbYHVrZiDOILZPCF69vPqrQJspD18LPkFqYIUA2U
+
 {
   "title": "Secured Blog",
   "author": "Authenticated User",
