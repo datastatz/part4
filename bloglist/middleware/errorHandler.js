@@ -1,7 +1,12 @@
-const errorHandler = (err, req, res, next) => {
-    console.error(err.message);
-    res.status(500).json({ error: 'Something went wrong' });
-};
-
-module.exports = errorHandler;
-
+const errorHandler = (error, request, response, next) => {
+    if (error.name === 'ValidationError') {
+      return response.status(400).json({ error: error.message })
+    } else if (error.name === 'MongoServerError' && error.code === 11000) {
+      return response.status(400).json({ error: 'Username must be unique' })
+    }
+  
+    next(error)
+  }
+  
+  module.exports = errorHandler
+  

@@ -10,26 +10,46 @@ usersRouter.get('/', async (req, res) => {
     res.json(users);
 });
 
-// Create a new user
-usersRouter.post('/', async (req, res) => {
+usersRouter.post('/', async (request, response, next) => {
     try {
-        const { username, name, password } = req.body;
-
-        // Validate username & password length
-        if (!username || !password || username.length < 3 || password.length < 3) {
-            return res.status(400).json({ error: 'Username and password must be at least 3 characters long' });
-        }
-
-        const saltRounds = 10;
-        const passwordHash = await bcrypt.hash(password, saltRounds);
-
-        const user = new User({ username, name, passwordHash });
-        const savedUser = await user.save();
-
-        res.status(201).json(savedUser);
+      const { username, name, password } = request.body
+  
+      // Check if username and password are provided
+      if (!username || !password) {
+        return response.status(400).json({ error: 'Username and password are required' })
+      }
+  
+      // Check if username and password are at least 3 characters long
+      if (username.length < 3 || password.length < 3) {
+        return response.status(400).json({ error: 'Username and password must be at least 3 characters long' })
+      }
+  
+      // Check if username is unique
+      const existingUser = await User.findOne({ username })
+      if (existingUser) {
+        return response.status(400).json({ error: 'Username must be unique' })
+      }
+  
+      // Hash the password before saving it
+      const saltRounds = 10
+      const passwordHash = await bcrypt.hash(password, saltRounds)
+  
+      const user = new User({
+        username,
+        name,
+        passwordHash,
+      })
+  
+      const savedUser = await user.save()
+      response.status(201).json(savedUser)
     } catch (error) {
-        res.status(400).json({ error: error.message });
+      next(error) // Pass any errors to the error handler middleware
     }
-});
-
-module.exports = usersRouter;
+  })
+  
+  usersRouter.get('/', async (request, response) => {
+    const users = await User.find({})
+    response.json(users)
+  })
+  
+  module.exports = usersRouter
