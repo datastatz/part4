@@ -7,3 +7,14 @@ Content-Type: application/json
   "url": "https://pomofocus.io/",
   "likes": 235
 }
+
+###
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "name": "Test User",
+    "password": "securepassword"
+}

@@ -5,6 +5,7 @@ const cors = require('cors');
 const blogRouter = require('./routes/blogs'); // Import blog routes
 const { PORT, MONGODB_URI } = require('./utils/config'); // Import config
 const errorHandler = require('./middleware/errorHandler')
+const usersRouter = require('./controllers/users')
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json()); // Fix for undefined content.body
 app.use('/api/blogs', blogRouter); // Use blog routes
 app.use(errorHandler)
+app.use('/api/users', usersRouter);
 
 
 
